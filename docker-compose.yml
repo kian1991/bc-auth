@@ -1,0 +1,11 @@
+services:
+  database:
+    image: postgres:16.1
+    environment:
+      POSTGRES_DB: bcauth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5437:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
