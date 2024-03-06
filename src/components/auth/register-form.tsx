@@ -93,12 +93,7 @@ export function RegisterForm() {
 										<FormItem className='flex-grow'>
 											<FormLabel htmlFor='lastName'>Last Name</FormLabel>
 											<FormControl>
-												<Input
-													{...field}
-													type='password'
-													aria-disabled={pending}
-													disabled={pending}
-												/>
+												<Input {...field} aria-disabled={pending} disabled={pending} />
 											</FormControl>
 											<FormMessage className='text-xs' />
 										</FormItem>
