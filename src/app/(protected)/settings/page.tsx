@@ -26,6 +26,7 @@ export default async function SettingsPage() {
 					}}>
 					<Button>Sign Out</Button>
 				</form>
+				<p>{JSON.stringify(session?.user, null, 2)}</p>
 			</div>
 		</div>
 	);

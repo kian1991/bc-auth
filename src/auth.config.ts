@@ -2,11 +2,10 @@ import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
-
 import type { NextAuthConfig } from 'next-auth';
 import { LoginSchema } from './schemas';
-import { db } from './lib/db';
 import { User } from '@prisma/client';
+import { getUserByEmail } from '../db/data';
 
 export default {
 	providers: [
@@ -21,7 +20,7 @@ export default {
 				if (validatedFields.success) {
 					const { email, password } = validatedFields.data;
 					// check if user exists
-					const user = await db.user.findUnique({ where: { email } });
+					const user = await getUserByEmail(email);
 
 					if (!user || !user.password) return null; // no pass because oauth
 

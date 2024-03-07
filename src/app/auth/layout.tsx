@@ -1,4 +1,4 @@
-import { db } from '@/lib/db';
+import { db } from '../../../db/prisma-client';
 import { PrismaClient } from '@prisma/client';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {

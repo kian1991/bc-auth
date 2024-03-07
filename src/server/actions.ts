@@ -4,7 +4,7 @@ import z from 'zod';
 import { LoginSchema, RegisterSchema } from '@/schemas';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
-import { db } from '@/lib/db';
+import { db } from '../../db/prisma-client';
 import { signIn } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
