@@ -3,8 +3,11 @@
 import z from 'zod';
 import { LoginSchema, RegisterSchema } from '@/schemas';
 import { redirect } from 'next/navigation';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
+import { signIn } from '@/auth';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
+import { AuthError } from 'next-auth';
 
 export async function login(values: z.infer<typeof LoginSchema>) {
 	const validateFields = LoginSchema.safeParse(values);
@@ -12,11 +15,26 @@ export async function login(values: z.infer<typeof LoginSchema>) {
 		return { error: 'Invalid fields' };
 	}
 
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-	console.log(values);
+	const { email, password } = validateFields.data;
 
-	return { error: 'Credentials not found' };
-	return redirect('/');
+	try {
+		await signIn('credentials', {
+			email,
+			password,
+			redirectTo: DEFAULT_LOGIN_REDIRECT,
+		});
+	} catch (error) {
+		if (error instanceof AuthError)
+			switch (error.type) {
+				case 'CredentialsSignin':
+					return { error: 'Invalid Credentials.' };
+				default:
+					return { error: 'Something went wrong' };
+			}
+
+		// We have to throw the error for the redirect (next.js quirks)
+		throw error;
+	}
 }
 
 export async function register(values: z.infer<typeof RegisterSchema>) {

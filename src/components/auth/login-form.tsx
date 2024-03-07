@@ -10,11 +10,7 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-	IconBrandGoogle,
-	IconBrandGithub,
-	IconExclamationMark,
-} from '@tabler/icons-react';
+import { IconBrandGoogle, IconBrandGithub } from '@tabler/icons-react';
 import Link from 'next/link';
 
 import { useForm } from 'react-hook-form';
@@ -29,13 +25,14 @@ import {
 } from '../ui/form';
 import { z } from 'zod';
 import { LoginSchema } from '@/schemas';
-import { login } from '../../../server/actions';
+import { login } from '../../server/actions';
 import { useState, useTransition } from 'react';
 import { MessageSquareWarningIcon } from 'lucide-react';
 
 export function LoginForm() {
 	// Error State
 	const [error, setError] = useState('');
+
 	// shadcn form
 	const form = useForm<z.infer<typeof LoginSchema>>({
 		resolver: zodResolver(LoginSchema),
@@ -46,10 +43,11 @@ export function LoginForm() {
 	});
 
 	// Form Status
-	const [pending, startTransition] = useTransition();
+	const [isPending, startTransition] = useTransition();
 
 	// Server Action Call
 	const handleSubmit = (values: z.infer<typeof LoginSchema>) => {
+		setError('');
 		startTransition(() =>
 			login(values).then((data) => {
 				if (data.error) setError(data.error);
@@ -80,8 +78,8 @@ export function LoginForm() {
 												<Input
 													{...field}
 													placeholder='the.obedient@sealteam.com'
-													aria-disabled={pending}
-													disabled={pending}
+													aria-disabled={isPending}
+													disabled={isPending}
 												/>
 											</FormControl>
 											<FormMessage className='text-xs' />
@@ -100,8 +98,8 @@ export function LoginForm() {
 												<Input
 													{...field}
 													type='password'
-													aria-disabled={pending}
-													disabled={pending}
+													aria-disabled={isPending}
+													disabled={isPending}
 												/>
 											</FormControl>
 											<FormMessage className='text-xs' />
@@ -115,7 +113,7 @@ export function LoginForm() {
 								</div>
 							)}
 							<div className='flex justify-center pt-3'>
-								<Button className='w-1/2' aria-disabled={pending} disabled={pending}>
+								<Button className='w-1/2' aria-disabled={isPending} disabled={isPending}>
 									Login
 								</Button>
 							</div>

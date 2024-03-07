@@ -29,7 +29,7 @@ import {
 } from '../ui/form';
 import { z } from 'zod';
 import { RegisterSchema } from '@/schemas';
-import { register } from '../../../server/actions';
+import { register } from '../../server/actions';
 import { useState, useTransition } from 'react';
 import { MessageSquareWarningIcon } from 'lucide-react';
 

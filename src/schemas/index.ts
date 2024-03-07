@@ -6,6 +6,7 @@ export const LoginSchema = z.object({
 		message: 'Password required',
 	}),
 });
+
 export const RegisterSchema = z
 	.object({
 		email: z.string().email('Yeah, that is not an email...'),
