@@ -50,7 +50,7 @@ export function LoginForm() {
 		setError('');
 		startTransition(() =>
 			login(values).then((data) => {
-				if (data.error) setError(data.error);
+				if (data?.error) setError(data.error);
 			})
 		);
 	};

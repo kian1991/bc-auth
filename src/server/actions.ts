@@ -54,15 +54,19 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
 	});
 	if (existingUser) return { error: 'Email already exists' };
 
-	// create user actually
-	await db.user.create({
-		data: {
-			name,
-			lastName,
-			password: hashedPassword,
-			email,
-		},
-	});
+	try {
+		// create user actually
+		await db.user.create({
+			data: {
+				name,
+				lastName,
+				password: hashedPassword,
+				email,
+			},
+		});
+	} catch (error) {
+		return { error: 'Oh Snap! Something went wrong :(' };
+	}
 
 	// implement success toast and verification email
 	return redirect('/');
