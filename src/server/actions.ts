@@ -8,14 +8,15 @@ import { db } from '../../db/prisma-client';
 import { signIn } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
+import { getUserByEmail } from '../../db/data';
 
 export async function login(values: z.infer<typeof LoginSchema>) {
-	const validateFields = LoginSchema.safeParse(values);
-	if (!validateFields.success) {
+	const validatedFields = LoginSchema.safeParse(values);
+	if (!validatedFields.success) {
 		return { error: 'Invalid fields' };
 	}
 
-	const { email, password } = validateFields.data;
+	const { email, password } = validatedFields.data;
 
 	try {
 		await signIn('credentials', {
@@ -47,11 +48,7 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
 	const hashedPassword = await bcrypt.hash(password, 10);
 
 	// Check for existing user
-	const existingUser = await db.user.findUnique({
-		where: {
-			email,
-		},
-	});
+	const existingUser = await getUserByEmail('');
 	if (existingUser) return { error: 'Email already exists' };
 
 	try {

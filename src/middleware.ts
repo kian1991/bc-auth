@@ -7,10 +7,11 @@ import {
 	apiAuthPrefix,
 } from './routes';
 
-const { auth } = NextAuth(authConfig);
+const { auth: middleware } = NextAuth(authConfig);
 
-export default auth((req) => {
+export default middleware((req) => {
 	const { nextUrl } = req;
+
 	const isLoggedIn = !!req.auth;
 
 	const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
@@ -26,6 +27,7 @@ export default auth((req) => {
 	}
 
 	if (!isLoggedIn && !isPublicRoute) {
+		console.log('USER HAS NO PERMISSIONS TO VIEW THIS! ⛔️');
 		// User isnt logged in and tries to access protected route
 		return Response.redirect(new URL('/auth/login', nextUrl));
 	}
