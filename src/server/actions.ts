@@ -9,6 +9,9 @@ import { signIn } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
 import { getUserByEmail } from '../../db/data';
+import { generateVerificationToken } from '@/lib/tokens';
+import { sendVerificationEmail } from '@/lib/mail';
+import { getVerificationTokenbyToken } from '../../db/verification-token';
 
 export async function login(values: z.infer<typeof LoginSchema>) {
 	const validatedFields = LoginSchema.safeParse(values);
@@ -17,6 +20,16 @@ export async function login(values: z.infer<typeof LoginSchema>) {
 	}
 
 	const { email, password } = validatedFields.data;
+
+	// lets check if the email is verified
+	const existingUser = await getUserByEmail(email);
+
+	if (!existingUser || !existingUser.password) return { error: 'Invalid Credentials.' };
+
+	if (!existingUser.emailVerified) {
+		// Todo: Redirect to verify or show a link
+		return { error: 'Email is not verfied yet.' };
+	}
 
 	try {
 		await signIn('credentials', {
@@ -48,7 +61,7 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
 	const hashedPassword = await bcrypt.hash(password, 10);
 
 	// Check for existing user
-	const existingUser = await getUserByEmail('');
+	const existingUser = await getUserByEmail(email);
 	if (existingUser) return { error: 'Email already exists' };
 
 	try {
@@ -62,9 +75,52 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
 			},
 		});
 	} catch (error) {
+		console.error(error);
 		return { error: 'Oh Snap! Something went wrong :(' };
 	}
 
-	// implement success toast and verification email
-	return redirect('/');
+	// create a verification token
+	const token = await generateVerificationToken(email);
+
+	// send email with token
+	sendVerificationEmail(token.email, token.token);
+
+	// redirect to verification page
+	redirect('/auth/login');
 }
+
+// token verification
+export const newVerification = async (token: string) => {
+	const existingToken = await getVerificationTokenbyToken(token);
+
+	if (!existingToken) {
+		return { error: 'Token does not exist!' };
+	}
+
+	const hasExpired = new Date(existingToken.expiresAt) < new Date();
+
+	if (hasExpired) {
+		return { error: 'Token has expired!' };
+	}
+
+	const existingUser = await getUserByEmail(existingToken.email);
+
+	if (!existingUser) {
+		return { error: 'Email does not exist!' };
+	}
+
+	await db.user.update({
+		where: { id: existingUser.id },
+		data: {
+			emailVerified: new Date(),
+			email: existingToken.email,
+			// update email to the verified one when the user changes it we just update send him new token and the email gets updated
+		},
+	});
+
+	await db.verificationToken.delete({
+		where: { id: existingToken.id },
+	});
+
+	return { success: 'Email successfully verified!' };
+};

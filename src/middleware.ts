@@ -27,7 +27,6 @@ export default middleware((req) => {
 	}
 
 	if (!isLoggedIn && !isPublicRoute) {
-		console.log('USER HAS NO PERMISSIONS TO VIEW THIS! ⛔️');
 		// User isnt logged in and tries to access protected route
 		return Response.redirect(new URL('/auth/login', nextUrl));
 	}

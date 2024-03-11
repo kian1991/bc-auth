@@ -32,6 +32,9 @@ import { RegisterSchema } from '@/schemas';
 import { register } from '../../server/actions';
 import { useState, useTransition } from 'react';
 import { MessageSquareWarningIcon } from 'lucide-react';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
+import { signIn } from 'next-auth/react';
+import SocialSignIn from './social-signin';
 
 export function RegisterForm() {
 	// Error State
@@ -55,7 +58,7 @@ export function RegisterForm() {
 	const handleSubmit = (values: z.infer<typeof RegisterSchema>) => {
 		startTransition(() =>
 			register(values).then((data) => {
-				if (data.error) setError(data.error);
+				if (data?.error) setError(data.error);
 			})
 		);
 	};
@@ -176,14 +179,7 @@ export function RegisterForm() {
 				</Form>
 			</CardContent>
 			<CardFooter className='text-center flex flex-col space-y-4'>
-				<div className='flex items-center space-x-4 py-4'>
-					<Button variant={'outline'} className='rounded-full'>
-						<IconBrandGoogle size={18} />
-					</Button>
-					<Button className='rounded-full'>
-						<IconBrandGithub size={18} />
-					</Button>
-				</div>
+				<SocialSignIn />
 				<Link href={'/auth/login'} className='text-xs hover:text-muted-foreground'>
 					Already have an account?
 				</Link>

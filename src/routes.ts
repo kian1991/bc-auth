@@ -1,11 +1,11 @@
 /**
  * Array of routes accessable publicly
  */
-export const publicRoutes = ['/'];
+export const publicRoutes = ['/', '/auth/new-verification'];
 /**
  * Array of routes used for auth
  */
-export const authRoutes = ['/auth/login', '/auth/register'];
+export const authRoutes = ['/auth/login', '/auth/register', '/auth/error'];
 
 // Routes for auth api purposes
 export const apiAuthPrefix = '/api/auth';

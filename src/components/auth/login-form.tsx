@@ -27,11 +27,20 @@ import { z } from 'zod';
 import { LoginSchema } from '@/schemas';
 import { login } from '../../server/actions';
 import { useState, useTransition } from 'react';
-import { MessageSquareWarningIcon } from 'lucide-react';
+import SocialSignIn from './social-signin';
+import { useSearchParams } from 'next/navigation';
+import ErrorMessage from '../error-message';
 
 export function LoginForm() {
 	// Error State
 	const [error, setError] = useState('');
+
+	// Read Errors from searchparams
+	const searchparams = useSearchParams();
+	const urlError =
+		searchparams.get('error') === 'OAuthAccountNotLinked'
+			? 'You signed up with a different method, please sign in with the same provider.'
+			: '';
 
 	// shadcn form
 	const form = useForm<z.infer<typeof LoginSchema>>({
@@ -107,11 +116,7 @@ export function LoginForm() {
 									)}
 								/>
 							</div>
-							{error && (
-								<div className='px-3 py-2 w-full text-xs bg-red-500/15 text-red-500 rounded-md flex items-center gap-2'>
-									<MessageSquareWarningIcon size={12} /> {error}
-								</div>
-							)}
+							{(error || urlError) && <ErrorMessage message={error || urlError} />}
 							<div className='flex justify-center pt-3'>
 								<Button className='w-1/2' aria-disabled={isPending} disabled={isPending}>
 									Login
@@ -123,12 +128,7 @@ export function LoginForm() {
 			</CardContent>
 			<CardFooter className='text-center flex flex-col space-y-4'>
 				<div className='flex items-center space-x-4 py-4'>
-					<Button variant={'outline'} className='rounded-full'>
-						<IconBrandGoogle size={18} />
-					</Button>
-					<Button className='rounded-full'>
-						<IconBrandGithub size={18} />
-					</Button>
+					<SocialSignIn />
 				</div>
 				<Link href={'/auth/register'} className='text-xs hover:text-muted-foreground'>
 					Don&#39;t have an account?

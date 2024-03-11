@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 export default async function SettingsPage() {
 	const session = await auth();
 
-	return <textarea value={JSON.stringify(session, null, 2)} rows={30} cols={90} />;
+	return <textarea defaultValue={JSON.stringify(session, null, 2)} rows={30} cols={90} />;
 	// return (
 	// 	<div className='h-full grid place-items-center '>
 	// 		<div className='flex flex-col gap-2'>
