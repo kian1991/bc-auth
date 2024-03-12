@@ -6,7 +6,7 @@ import type { NextAuthConfig } from 'next-auth';
 
 import { LoginSchema } from './schemas';
 import { User } from '@prisma/client';
-import { getUserByEmail } from '../db/data';
+import { getUserByEmail } from '../db/user';
 
 export default {
 	providers: [

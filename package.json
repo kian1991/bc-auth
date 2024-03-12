@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"email": "email dev",
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
@@ -15,6 +16,7 @@
 		"@radix-ui/react-label": "^2.0.2",
 		"@radix-ui/react-select": "^2.0.0",
 		"@radix-ui/react-slot": "^1.0.2",
+		"@react-email/components": "^0.0.15",
 		"@tabler/icons-react": "^2.47.0",
 		"bcryptjs": "^2.4.3",
 		"class-variance-authority": "^0.7.0",
@@ -24,6 +26,7 @@
 		"next-auth": "5.0.0-beta.15",
 		"react": "^18",
 		"react-dom": "^18",
+		"react-email": "^2.1.0",
 		"react-hook-form": "^7.51.0",
 		"react-spinners": "^0.13.8",
 		"resend": "^3.2.0",

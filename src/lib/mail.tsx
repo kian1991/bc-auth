@@ -1,5 +1,6 @@
 import { APP_NAME, BASE_URL, MAIL_ADDRESSES } from '@/constants';
 import { Resend } from 'resend';
+import { WelcomeEmail } from '../../emails/welcome-email';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,5 +16,14 @@ export const sendVerificationEmail = async (email: string, token: string) => {
             <p>Click the link below to verify your email</p>
             <a href="${confirmLink}">${confirmLink}</a>
         `,
+	});
+};
+
+export const sendWelcomeEmail = async (name: string, email: string) => {
+	await resend.emails.send({
+		from: MAIL_ADDRESSES.VERIFY,
+		to: email,
+		subject: `🔓 Verify your email at ${APP_NAME}`,
+		react: <WelcomeEmail name={name} />,
 	});
 };

@@ -8,10 +8,22 @@ import { db } from '../../db/prisma-client';
 import { signIn } from '@/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 import { AuthError } from 'next-auth';
-import { getUserByEmail } from '../../db/data';
+import { getUserByEmail } from '../../db/user';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/mail';
 import { getVerificationTokenbyToken } from '../../db/verification-token';
+
+// token verification
+// type ServerActionResponse = Promise<
+// 	| {
+// 			error: string;
+// 			success?: undefined;
+// 	  }
+// 	| {
+// 			success: string;
+// 			error?: undefined;
+// 	  }
+// >;
 
 export async function login(values: z.infer<typeof LoginSchema>) {
 	const validatedFields = LoginSchema.safeParse(values);
@@ -89,7 +101,6 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
 	redirect('/auth/login');
 }
 
-// token verification
 export const newVerification = async (token: string) => {
 	const existingToken = await getVerificationTokenbyToken(token);
 

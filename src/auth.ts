@@ -2,7 +2,7 @@ import NextAuth, { DefaultSession } from 'next-auth';
 import authConfig from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { db } from '../db/prisma-client';
-import { getUserById } from '../db/data';
+import { getUserById } from '../db/user';
 import { UserRole } from '@prisma/client';
 
 type ExtendedUser = DefaultSession['user'] & {
@@ -28,13 +28,11 @@ export const {
 	},
 	callbacks: {
 		signIn: async ({ user, account }) => {
-			console.log('signingin user', user, account);
-			// check if user is signing in using credentials and the email is verified
-			// Allow OAuth
-			if (account?.provider !== 'credentials') return true; // undefined wont be 'credentials' => ?
-			if (!user || !user.id) return false;
+			console.log(user, account);
+			if (account?.provider !== 'credentials') return true;
+			if (!user || !user.id) return false; // Access Denied: no user
 			const existingUser = await getUserById(user.id);
-			if (!existingUser?.emailVerified) return false;
+			if (existingUser?.emailVerified === null) return false; // Access Denied
 			return true;
 		},
 		jwt: async ({ token }) => {
